@@ -1,0 +1,65 @@
+-- Users table stores information about users who use Ola service
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    address VARCHAR(255),
+    city VARCHAR(100),
+    state VARCHAR(50),
+    zip_code VARCHAR(20),
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Drivers table stores information about drivers registered with Ola
+CREATE TABLE Drivers (
+    driver_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    license_number VARCHAR(50),
+    car_make VARCHAR(50),
+    car_model VARCHAR(50),
+    car_color VARCHAR(50),
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Rides table stores information about rides taken by users
+CREATE TABLE Rides (
+    ride_id SERIAL PRIMARY KEY,
+    user_id INT,
+    driver_id INT,
+    pickup_location VARCHAR(255),
+    dropoff_location VARCHAR(255),
+    pickup_time TIMESTAMP,
+    dropoff_time TIMESTAMP,
+    fare DECIMAL(8, 2),
+    status ENUM ('Completed', 'Cancelled', 'Ongoing') DEFAULT 'Ongoing',
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (driver_id) REFERENCES Drivers(driver_id)
+);
+
+-- Payments table stores information about payments for rides
+CREATE TABLE Payments (
+    payment_id SERIAL PRIMARY KEY,
+    ride_id INT,
+    user_id INT,
+    amount DECIMAL(10, 2),
+    payment_date TIMESTAMP,
+    FOREIGN KEY (ride_id) REFERENCES Rides(ride_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Cars table stores information about cars available for rides
+CREATE TABLE Cars (
+    car_id SERIAL PRIMARY KEY,
+    driver_id INT,
+    car_make VARCHAR(50),
+    car_model VARCHAR(50),
+    car_color VARCHAR(50),
+    license_plate VARCHAR(20),
+    status ENUM ('Available', 'Not Available', 'Under Maintenance') DEFAULT 'Available',
+    FOREIGN KEY (driver_id) REFERENCES Drivers(driver_id)
+);
